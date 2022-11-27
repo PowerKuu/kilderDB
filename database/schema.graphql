@@ -1,0 +1,14 @@
+type Category {
+    id:ID!
+
+    name: String! @search(by: [fulltext])
+    # @hasInverse(id) eller noe kan funke
+    sources: [Source]! 
+}
+
+type Source {
+    id:ID!
+    
+    name: String! @search(by: [fulltext])
+    content: String!
+}

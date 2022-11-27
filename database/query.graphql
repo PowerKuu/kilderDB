@@ -1,0 +1,62 @@
+# Write your query or mutation here
+query getCategories {
+    queryCategory {
+      id
+      name
+    }
+}
+
+mutation addCategory ($name: String!) {
+	addCategory(input: {name: $name sources: []}) {
+    category {
+      id
+    }
+  }
+}
+
+mutation removeCategory ($categoryID: ID!) {
+  deleteCategory(filter: {id: [$categoryID]}) {
+    category {
+      id
+    }
+  }
+}
+
+
+
+
+
+
+query getSources($categoryID: ID!) {
+  getCategory(id: $categoryID) {
+    sources {
+      id,
+      name,
+      content
+    }
+  }
+}
+
+mutation addSource($categoryID: ID!, $source:SourceRef!) {
+  updateCategory(input: {filter: {id: [$categoryID]} set: {sources: [$source]}}){
+    category(filter: {id: [$categoryID]}){
+      id
+    }
+  }
+}
+
+mutation updateSourceContent($sourceID: ID!, $content: String!) {
+  updateSource(input: { filter: {id: [$sourceID]} set: {content: $content}}){
+    source {
+      id
+    }
+  }
+}
+
+mutation removeSource($categoryID: ID! $sourceID: ID!) {
+  updateCategory(input: {filter: {id:[$categoryID]} remove: {sources: {id: $sourceID}}}){
+    category {
+      id
+    }
+  }
+}
