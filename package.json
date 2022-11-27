@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@klevn/gql-client": "^1.0.8",
     "dgraph-dedicated": "^3.0.0"
   }
 }
