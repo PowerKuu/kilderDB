@@ -1,27 +1,56 @@
 import GqlClient from "@klevn/gql-client"
 
-const GQL = {
-    hello: `
-    query ($pass: String!){
-        todoHistoryByPassword(password: $pass) {
-            _id
+
+const gql = new GqlClient({
+    url: "http://localhost:8080/graphql",
+}, {
+    getCategories: `
+    query getCategories {
+        queryCategory {
+          id
+          name
         }
     }
     `,
 
-    world: `
-    query ($pass: String!){
-        todoHistoryByPassword(password: $pass) {
-            _id
+    addCategory: `
+    mutation addCategory ($name: String!) {
+        addCategory(input: {name: $name sources: []}) {
+        category {
+          id
+        }
+      }
+    }    
+    `,
+
+    removeCategory: `
+    mutation removeCategories ($categoryIDS: [ID!]) {
+        deleteCategory(filter: {id: $categoryIDS}) {
+          category {
+            id
+          }
         }
     }
+    `,
+
+
+
+    getSources: `
+
+    `,
+
+    addSource: `
+
+    `,
+
+    updateSourceContent: `
+
+    `,
+
+    removeSource: `
+    
     `
-}
-
-
-const gql = new GqlClient({
-    url: "https://graphql.eu.fauna.com/graphql",
-}, GQL)
+})
 
 
 interface Category {
@@ -46,7 +75,7 @@ async function getCategories(): Categories {
 
 }
 
-async function addCategory(category: Category):boolean {
+async function addCategory(category: Category): boolean {
 
 }
 
@@ -61,14 +90,14 @@ async function getSources(categoryID: string): Sources{
 
 }
 
-async function addSource(categoryID: string, source: Source):boolean {
+async function addSource(categoryID: string, source: Source): boolean {
 
 }
 
-async function updateSourceContent(categoryID: string, sourceID: string, content:string):boolean {
+async function updateSourceContent(sourceID: string, content:string): boolean {
 
 }
 
-async function removeSource(categoryID: string, sourceID: string): boolean{
+async function removeSource(sourceID: string): boolean{
     
 }
