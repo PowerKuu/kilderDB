@@ -60,3 +60,18 @@ mutation removeSource($categoryID: ID! $sourceID: ID!) {
     }
   }
 }
+
+
+
+
+# Variables
+# {
+#  "name": "helos",
+#  "categoryID": "0x10",
+##  "sourceID": "0x11",
+#  "content": "wojdkjwkfdwhdkwhdkwjdhkjwdkhjwhkjwdhkjw",
+#  "source": {
+#    "name": "hello",
+#    "content": "hekid"
+#  }
+# }
