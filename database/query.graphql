@@ -45,6 +45,7 @@ mutation addSource($categoryID: ID!, $source:SourceRef!) {
   }
 }
 
+# hasInverse() may work $categoryID filter by catergory id
 mutation updateSourceContent($sourceID: ID!, $content: String!) {
   updateSource(input: { filter: {id: [$sourceID]} set: {content: $content}}){
     source {
