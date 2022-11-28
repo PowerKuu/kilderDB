@@ -3,6 +3,17 @@ const sourcesElement = document.querySelector("#sources #content")
 const searchSourceElement = document.getElementById("search-source")
 const addSourceElement = document.getElementById("add-source")
 
+function hashHex(hex) {
+    if (!hex) return "heloo"
+    const number = Number(hex)
+    const hash = String(number).split("").map((char) => {
+        const charNum = Number(char)
+        return String.fromCharCode(charNum+65)
+    })
+    
+    return hash.join("")
+}
+
 searchSourceElement.addEventListener("input", (event) => {
     const value = event.target.value
     if (!value) {
@@ -32,7 +43,8 @@ function clearSources() {
 function addSource(name, id) {
     var sourceElement = document.createElement("div")
     sourceElement.classList.add("item")
-    sourceElement.id = id
+    sourceElement.id = hashHex(id)
+    sourceElement.nid = id
 
     var nameElement = document.createElement("name")
     nameElement.classList.add("name")
@@ -60,11 +72,11 @@ var lastActiveSource
 
 function activeSourceChange(id) {
     console.log(id)
-    const lastElement = sourcesElement.querySelector(`#${lastActiveSource}`)
+    const lastElement = sourcesElement.querySelector(`#${hashHex(lastActiveSource)}`)
     if (lastElement) {
         lastElement.classList.remove('active')
     }
-    const currentElement = sourcesElement.querySelector(`#${id}`)
+    const currentElement = sourcesElement.querySelector(`#${hashHex(id)}`)
     if (currentElement) {
         // Database get id data
 
@@ -76,15 +88,10 @@ function activeSourceChange(id) {
 }
 
 function updateActiveSources() {
-    var activeSource = sourcesElement.querySelector(`#${lastActiveSource}`)
+    var activeSource = sourcesElement.querySelector(`#${hashHex(lastActiveSource)}`)
     
     if (!activeSource) activeSource = sourcesElement.firstElementChild
     if (!activeSource) return
 
-    activeSourceChange(activeSource.id)
+    activeSourceChange(activeSource.nid)
 }
-
-addSource("hello", "helloss")
-addSource("hello", "hellosvs")
-addSource("hsello", "hellocsvs")
-updateActiveSources()

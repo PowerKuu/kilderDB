@@ -1,2 +1,2 @@
 @echo off
-npx docker-dedicated dev
+npx dgraph-dedicated dev

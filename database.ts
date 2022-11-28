@@ -3,115 +3,98 @@ import GqlClient from "@klevn/gql-client"
 
 const gql = new GqlClient({
     url: "http://localhost:8080/graphql",
-}, {
-  getCategories: `query getCategories {
-    queryCategory {
-      id
-      name
-    }
-  }`,
-
-  addCategory: `mutation addCategory ($categoryName: String!) {
-    addCategory(input: {name: $categoryName sources: []}) {
-      category {
-        id
-      }
-    }
-  }`,
-
-  removeCategory: `mutation removeCategory ($categoryID: ID!) {
-    deleteCategory(filter: {id: [$categoryID]}) {
-      category {
-        id
-      }
-    }
-  }`,
-
-
-
-
-
-
-  getSources: `query getSources($categoryID: ID!) {
-    getCategory(id: $categoryID) {
-      sources {
-        id,
-        name,
-        content
-      }
-    }
-  }`,
-
-  addSource: `mutation addSource($categoryID: ID!, $sourceName: String!) {
-    addSource(input: {category: {id: $categoryID}, name: $sourceName, content: ""}){
-      source {
-        id
-      }
-    }
-  }`,
-
-  updateSourceContent: `mutation updateSourceContent($sourceID: ID!, $content: String!) {
-    updateSource(input: { filter: {id: [$sourceID]} set: {content: $content}}){
-      source {
-        id
-      }
-    }
-  }`,
-
-  removeSource: `mutation removeSource($sourceID: ID!) {
-    deleteSource(filter: {id: [$sourceID]}) {
-      source {
-        id
-      }
-    }
-  }`
-})
+}, "./database/query.graphql")
 
 
 interface Category {
+  id: String
+
   name: string
 }
 
 type Categories = Category[]
 
 interface Source {
-    name: string
-    content: string
+  id: String
 
-    categoryID: string
+  name: string
+  content: string
+
+  categoryID: string
 }
 
-type Sources = CategSourceory[]
+type Sources = Source[]
 
 
 
-async function getCategories(): Categories {
+export async function getCategories(): Promise<Categories|null> {
+  const rawData = await gql.run("getCategories") 
+  const data = rawData?.queryCategory
 
+  return data as Categories
 }
 
-async function addCategory(category: Category): boolean {
+export async function addCategory(categoryName: String): Promise<boolean> {
+  const rawData = await gql.run("addCategory", {
+    categoryName
+  }) 
 
+  const data = Boolean(rawData?.addCategory?.category?.[0]?.id)
+
+  return data
 }
 
-async function removeCategory(categoryID: string): boolean{
+export async function removeCategory(categoryID: string): Promise<boolean> {
+  const rawData = await gql.run("removeCategory", {
+    categoryID
+  })
 
+  const data = Boolean(rawData?.deleteCategory?.category?.[0]?.id)
+
+  return data
 }
 
 
 
 
-async function getSources(categoryID: string): Sources{
+export async function getSources(categoryID: string): Promise<Sources|null> {
+  const rawData = await gql.run("getSources", {
+    categoryID
+  })
 
+  const data = rawData?.getCategory?.sources
+
+  return data as Sources
 }
 
-async function addSource(source: Source): boolean {
+export async function addSource(categoryID: string, sourceName:string): Promise<boolean> {
+  const rawData = await gql.run("addSource", {
+    categoryID, 
+    sourceName
+  })
 
+  const data = Boolean(rawData?.addSource?.source?.[0]?.id)
+
+  return data
 }
 
-async function updateSourceContent(sourceID: string, content:string): boolean {
-  
+export async function updateSourceContent(sourceID: string, content:string): Promise<string|null> {
+  const rawData = await gql.run("updateSourceContent", {
+    sourceID, 
+    content
+  })
+
+  const data = rawData?.updateSource?.source?.[0]?.content
+
+  return data as string
 }
 
-async function removeSource(sourceID: string): boolean{
-    
+export async function removeSource(sourceID: string): Promise<boolean> {
+  const rawData = await gql.run("removeSource", {
+    sourceID
+  })
+
+  const data = Boolean(rawData?.deleteSource?.source?.[0]?.id)
+
+  return data
 }
