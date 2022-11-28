@@ -4,67 +4,81 @@ import GqlClient from "@klevn/gql-client"
 const gql = new GqlClient({
     url: "http://localhost:8080/graphql",
 }, {
-    getCategories: `
-    query getCategories {
-        queryCategory {
-          id
-          name
-        }
+  getCategories: `query getCategories {
+    queryCategory {
+      id
+      name
     }
-    `,
+  }`,
 
-    addCategory: `
-    mutation addCategory ($name: String!) {
-        addCategory(input: {name: $name sources: []}) {
-        category {
-          id
-        }
+  addCategory: `mutation addCategory ($categoryName: String!) {
+    addCategory(input: {name: $categoryName sources: []}) {
+      category {
+        id
       }
-    }    
-    `,
-
-    removeCategory: `
-    mutation removeCategories ($categoryIDS: [ID!]) {
-        deleteCategory(filter: {id: $categoryIDS}) {
-          category {
-            id
-          }
-        }
     }
-    `,
+  }`,
+
+  removeCategory: `mutation removeCategory ($categoryID: ID!) {
+    deleteCategory(filter: {id: [$categoryID]}) {
+      category {
+        id
+      }
+    }
+  }`,
 
 
 
-    getSources: `
 
-    `,
 
-    addSource: `
 
-    `,
+  getSources: `query getSources($categoryID: ID!) {
+    getCategory(id: $categoryID) {
+      sources {
+        id,
+        name,
+        content
+      }
+    }
+  }`,
 
-    updateSourceContent: `
+  addSource: `mutation addSource($categoryID: ID!, $sourceName: String!) {
+    addSource(input: {category: {id: $categoryID}, name: $sourceName, content: ""}){
+      source {
+        id
+      }
+    }
+  }`,
 
-    `,
+  updateSourceContent: `mutation updateSourceContent($sourceID: ID!, $content: String!) {
+    updateSource(input: { filter: {id: [$sourceID]} set: {content: $content}}){
+      source {
+        id
+      }
+    }
+  }`,
 
-    removeSource: `
-    
-    `
+  removeSource: `mutation removeSource($sourceID: ID!) {
+    deleteSource(filter: {id: [$sourceID]}) {
+      source {
+        id
+      }
+    }
+  }`
 })
 
 
 interface Category {
-    name: string
-    id: string
+  name: string
 }
 
 type Categories = Category[]
 
 interface Source {
     name: string
-    id: string
-
     content: string
+
+    categoryID: string
 }
 
 type Sources = CategSourceory[]
@@ -90,12 +104,12 @@ async function getSources(categoryID: string): Sources{
 
 }
 
-async function addSource(categoryID: string, source: Source): boolean {
+async function addSource(source: Source): boolean {
 
 }
 
 async function updateSourceContent(sourceID: string, content:string): boolean {
-
+  
 }
 
 async function removeSource(sourceID: string): boolean{

@@ -6,8 +6,8 @@ query getCategories {
     }
 }
 
-mutation addCategory ($name: String!) {
-	addCategory(input: {name: $name sources: []}) {
+mutation addCategory ($categoryName: String!) {
+	addCategory(input: {name: $categoryName sources: []}) {
     category {
       id
     }
@@ -37,9 +37,9 @@ query getSources($categoryID: ID!) {
   }
 }
 
-mutation addSource($categoryID: ID!, $source:SourceRef!) {
-  updateCategory(input: {filter: {id: [$categoryID]} set: {sources: [$source]}}){
-    category(filter: {id: [$categoryID]}){
+mutation addSource($categoryID: ID!, $sourceName: String!) {
+  addSource(input: {category: {id: $categoryID}, name: $sourceName, content: ""}){
+    source {
       id
     }
   }
@@ -54,14 +54,13 @@ mutation updateSourceContent($sourceID: ID!, $content: String!) {
   }
 }
 
-mutation removeSource($categoryID: ID! $sourceID: ID!) {
-  updateCategory(input: {filter: {id:[$categoryID]} remove: {sources: {id: $sourceID}}}){
-    category {
+mutation removeSource($sourceID: ID!) {
+  deleteSource(filter: {id: [$sourceID]}) {
+    source {
       id
     }
   }
 }
-
 
 
 
