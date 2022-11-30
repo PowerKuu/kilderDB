@@ -1,5 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300&family=Lato:wght@300&family=Mulish:wght@300&display=swap');
 
+@-webkit-keyframes rotating {
+    from{
+        -webkit-transform: rotate(0deg);
+    }
+    to{
+        -webkit-transform: rotate(360deg);
+    }
+}
+
 * {
     transition: 0.5s;
     margin: 0;
@@ -18,6 +27,39 @@ html, body, .sections {
     width: 100%;
     background-color: rgb(255, 255, 255);
 }   
+
+.watermark {
+    position: absolute;
+    color: black;
+    left: 0.4rem;
+    bottom: 0.3rem;
+    font-size: 0.8rem !important;
+}
+
+.sync {
+    height: 1.2rem;
+    width: 1.2rem;
+
+    position: absolute;
+    right: 0.4rem;
+    bottom: 0.3rem;
+}
+
+.sync.working {
+    background-image: url("/images/sync.svg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover; 
+
+    -webkit-animation: rotating 2s linear infinite;
+}
+
+.sync.done {
+    background-image: url("/images/done.svg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
 
 
 .sections {

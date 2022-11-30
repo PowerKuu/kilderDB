@@ -3,8 +3,13 @@ const categoriesElement = document.querySelector("#categories #content")
 const addCategoryElement = document.getElementById("add-category")
 const searchCategoryElement = document.getElementById("search-category")
 
+var lastActiveCategory
+var lastCategorySearch
+
+var noCategorySelected
+
 function hashHex(hex) {
-    if (!hex) return "heloo"
+    if (!hex) return "null"
     const number = Number(hex)
     const hash = String(number).split("").map((char) => {
         const charNum = Number(char)
@@ -14,14 +19,16 @@ function hashHex(hex) {
     return hash.join("")
 }
 
+var timeout
+
 searchCategoryElement.addEventListener("input", (event) => {
     const value = event.target.value
-    if (!value) {
-        // Database show all
-    }
     
-    // Database search
-    console.log(value)
+    if (timeout) clearTimeout(timeout)
+    lastCategorySearch = value
+    timeout = setTimeout(() => {
+        renderCategories(value)
+    }, 250)
 })
 
 addCategoryElement.onclick = async () => {
@@ -76,19 +83,15 @@ function addCategory(name, id) {
                     "content-type": "application/json"
                 },
                 body: JSON.stringify({
-                    categoryID: id,
-                    "poop": "loop"
+                    categoryID: id
                 })
             })
-
-            renderCategories()
+            renderCategories(lastCategorySearch)
             return
         }
         activeCategoryChange(id)
     }
 }
-
-var lastActiveCategory
 
 function activeCategoryChange(id) {
     const lastElement = categoriesElement.querySelector(`#${hashHex(lastActiveCategory)}`)
@@ -97,7 +100,7 @@ function activeCategoryChange(id) {
     }
     const currentElement = categoriesElement.querySelector(`#${hashHex(id)}`)
     if (currentElement) {
-        // Database get id data
+        renderSources(id)
 
         currentElement.classList.add('active')
         
@@ -109,7 +112,12 @@ function updateActiveCategories() {
     var activeCategory = categoriesElement.querySelector(`#${hashHex(lastActiveCategory)}`)
     
     if (!activeCategory) activeCategory = categoriesElement.firstElementChild
-    if (!activeCategory) return
+    if (!activeCategory) {
+        noCategorySelected = true
+        clearSources()
+        return
+    }
 
+    noCategorySelected = false
     activeCategoryChange(activeCategory.nid)
 }

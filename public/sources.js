@@ -3,8 +3,67 @@ const sourcesElement = document.querySelector("#sources #content")
 const searchSourceElement = document.getElementById("search-source")
 const addSourceElement = document.getElementById("add-source")
 
+const editorElement = document.getElementById("editor")
+
+const syncElement = document.getElementById("sync")
+
+var lastActiveSource
+var lastSourceSearch
+
+var contentTimeout
+
+var noSourceSelected
+
+async function contentHandler(){
+    if (contentTimeout) clearTimeout(contentTimeout)
+
+    const contentRaw = await fetch("/api/getContent", {
+        method: "POST",
+        headers: {
+            "content-type": "application/json"
+        },
+        body: JSON.stringify({
+            sourceID: lastActiveSource
+        })
+    })
+
+    const content = await contentRaw.text()
+
+    if (content != undefined){
+        editorElement.value = content.trim()
+    } 
+
+    editorElement.addEventListener("input", (event) => {
+        if (noSourceSelected) {
+            event.preventDefault()
+            return
+        }
+        
+        const value = event.target.value
+        const id = lastActiveSource
+
+        syncElement.classList.replace("done", "working")
+
+
+        if (contentTimeout) clearTimeout(contentTimeout)
+        contentTimeout = setTimeout(async () => {
+            await fetch("/api/updateSourceContent", {
+                method: "POST",
+                headers: {
+                    "content-type": "application/json"
+                },
+                body: JSON.stringify({
+                    content: value,
+                    sourceID: id
+                })
+            })
+            syncElement.classList.replace("working", "done")
+        }, 1000)
+    })
+}
+
 function hashHex(hex) {
-    if (!hex) return "heloo"
+    if (!hex) return "null"
     const number = Number(hex)
     const hash = String(number).split("").map((char) => {
         const charNum = Number(char)
@@ -14,23 +73,38 @@ function hashHex(hex) {
     return hash.join("")
 }
 
+var searchTimeout
 searchSourceElement.addEventListener("input", (event) => {
     const value = event.target.value
-    if (!value) {
-        // Database show all
-    }
-    
-    // Database search
-    console.log(value)
+
+    if (searchTimeout) clearTimeout(searchTimeout)
+    lastSourceSearch = value
+    searchTimeout = setTimeout(() => {
+        renderSources(lastActiveCategory, value)
+    }, 250)
+
 })
 
-addSourceElement.onclick = () => {
+addSourceElement.onclick = async () => {
+    if (noCategorySelected) return
     const value = searchSourceElement.value
     if (!value) return  
 
     searchSourceElement.value = ""
-    // Database add
-    console.log(value)
+    
+
+    await fetch("/api/addSource", {
+        method: "POST",
+        headers: {
+            "content-type": "application/json"
+        },
+        body: JSON.stringify({
+            sourceName: value,
+            categoryID: lastActiveCategory
+        })
+    })
+
+    renderSources(lastActiveCategory)
 }
 
 
@@ -38,6 +112,7 @@ addSourceElement.onclick = () => {
 
 function clearSources() {
     sourcesElement.innerHTML = ""
+    editorElement.value = ""
 }
 
 function addSource(name, id) {
@@ -58,32 +133,36 @@ function addSource(name, id) {
 
     sourcesElement.appendChild(sourceElement)
 
-    sourceElement.onclick = (event) => {
+    sourceElement.onclick = async (event) => {
         if (event.target.tagName === "IMG") {
-            // Database remove
+            await fetch("/api/removeSource", {
+                method: "POST",
+                headers: {
+                    "content-type": "application/json"
+                },
+                body: JSON.stringify({
+                    sourceID: id
+                })
+            })
 
+            renderSources(lastActiveCategory, lastSourceSearch)
             return
         }
         activeSourceChange(id)
     }
 }
 
-var lastActiveSource
-
 function activeSourceChange(id) {
-    console.log(id)
     const lastElement = sourcesElement.querySelector(`#${hashHex(lastActiveSource)}`)
     if (lastElement) {
         lastElement.classList.remove('active')
     }
     const currentElement = sourcesElement.querySelector(`#${hashHex(id)}`)
     if (currentElement) {
-        // Database get id data
-
         currentElement.classList.add('active')
 
-        
         lastActiveSource = id
+        contentHandler()
     }
 }
 
@@ -91,7 +170,12 @@ function updateActiveSources() {
     var activeSource = sourcesElement.querySelector(`#${hashHex(lastActiveSource)}`)
     
     if (!activeSource) activeSource = sourcesElement.firstElementChild
-    if (!activeSource) return
+    if (!activeSource) {
+        noSourceSelected = true
+        return
+    }
+
+    noSourceSelected = noCategorySelected
 
     activeSourceChange(activeSource.nid)
 }

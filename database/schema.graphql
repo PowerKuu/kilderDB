@@ -1,15 +1,15 @@
 type Category {
     id:ID!
 
-    name: String! @search(by: [fulltext])
+    name: String! @search(by: [regexp])
     sources: [Source]! @hasInverse(field:"category")
 }
 
 type Source {
     id:ID!
     
-    name: String! @search(by: [fulltext])
-    content: String!
+    name: String! @search(by: [regexp])
+    content: String! 
 
     category: Category!
 }

@@ -1,17 +1,78 @@
-async function renderSources(){
+async function renderSources(id, search){
+    if (noCategorySelected) return
+    
+    var sourcesRaw
 
+    if (!search || search == "") {
+        sourcesRaw = await fetch("/api/getSources", {
+            method: "POST",
+
+            headers: {
+                "content-type": "application/json"
+            },
+
+            body: JSON.stringify({
+                categoryID: id
+            })
+        })
+    } else {
+        sourcesRaw = await fetch("/api/searchSources", {
+            method: "POST",
+            
+            headers: {
+                "content-type": "application/json"
+            },
+
+            body: JSON.stringify({
+                search: search,
+                categoryID: id
+            })
+        })
+    }
+
+    const sources = await sourcesRaw.json()
+
+    clearSources()
+
+    if (!sources || sources.lenght < 1) return
+
+    for (var source of sources){
+        addSource(source.name, source.id)
+    }
+
+    updateActiveSources()
 }
 
-async function renderCategories(){
-    const categoriesRaw = await fetch("/api/getCategories", {
-        method: "POST"
-    })
+async function renderCategories(search = undefined){
+    var categoriesRaw
+
+    if (!search || search == "") {
+        categoriesRaw = await fetch("/api/getCategories", {
+            method: "POST"
+        })
+    } else {
+        categoriesRaw = await fetch("/api/searchCategories", {
+            method: "POST",
+            
+            headers: {
+                "content-type": "application/json"
+            },
+
+            body: JSON.stringify({
+                search
+            })
+        })
+    }
 
     const categories = await categoriesRaw.json()
 
-    if (!categories || categories.lenght < 1) return
 
     clearCategories()
+
+    if (!categories || categories.lenght < 1) {
+        return
+    }
+
     for (var category of categories){
         addCategory(category.name, category.id)
     }

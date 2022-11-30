@@ -22,6 +22,13 @@ mutation removeCategory ($categoryID: ID!) {
   }
 }
 
+query searchCategories ($regexpName: String!){
+  queryCategory(filter: {name: {regexp: $regexpName}}){
+    id
+    name
+  }
+}
+
 
 
 
@@ -34,6 +41,13 @@ query getSources($categoryID: ID!) {
       name,
       content
     }
+  }
+}
+
+
+query getContent($sourceID: ID!) {
+  getSource(id: $sourceID){
+    content
   }
 }
 
@@ -63,6 +77,15 @@ mutation removeSource($sourceID: ID!) {
 }
 
 
+query searchSources($categoryID:ID! $regexpName: String!){
+  getCategory(id: $categoryID){
+    sources(filter: {name: {regexp: $regexpName}}){
+      name
+      id
+      content
+    }
+  }
+}
 
 # Variables
 # {
