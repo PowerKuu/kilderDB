@@ -1,3 +1,7 @@
+const editorElement = document.getElementById("editor")
+const toggleElement = document.getElementById("toggle")
+const markdownElement = document.getElementById("markdown")
+
 async function renderSources(id, search){
     if (noCategorySelected) return
     
@@ -81,9 +85,16 @@ async function renderCategories(search = undefined){
 }
 
 
+var enableMarkdown = false
 function toggleMarkdown(){
-    if (noSourceSelected) return
-    
+    if (noSourceSelected || noCategorySelected) return
+    enableMarkdown = !enableMarkdown
+
+    if (enableMarkdown) {
+        
+    } else {
+
+    }
 }
 
 renderCategories()

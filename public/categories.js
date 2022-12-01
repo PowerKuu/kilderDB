@@ -3,6 +3,7 @@ const categoriesElement = document.querySelector("#categories #content")
 const addCategoryElement = document.getElementById("add-category")
 const searchCategoryElement = document.getElementById("search-category")
 
+
 var lastActiveCategory
 var lastCategorySearch
 
@@ -114,10 +115,17 @@ function updateActiveCategories() {
     if (!activeCategory) activeCategory = categoriesElement.firstElementChild
     if (!activeCategory) {
         noCategorySelected = true
+        editorElement.setAttribute("readonly", true)
+        editorElement.classList.add("readonly")
         clearSources()
         return
     }
 
     noCategorySelected = false
+
+    
+    editorElement.removeAttribute("readonly")
+    editorElement.classList.remove("readonly")
+
     activeCategoryChange(activeCategory.nid)
 }

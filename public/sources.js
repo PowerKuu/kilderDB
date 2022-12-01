@@ -3,8 +3,6 @@ const sourcesElement = document.querySelector("#sources #content")
 const searchSourceElement = document.getElementById("search-source")
 const addSourceElement = document.getElementById("add-source")
 
-const editorElement = document.getElementById("editor")
-
 const syncElement = document.getElementById("sync")
 
 var lastActiveSource
@@ -174,13 +172,13 @@ function updateActiveSources() {
     if (!activeSource) activeSource = sourcesElement.firstElementChild
     if (!activeSource) {
         noSourceSelected = true
-        editorElement.setAttribute("readonly", noSourceSelected)
+        editorElement.setAttribute("readonly", true)
         editorElement.classList.add("readonly")
         return
     }
 
     noSourceSelected = noCategorySelected
-    console.log(noSourceSelected)
+
     editorElement.removeAttribute("readonly")
     editorElement.classList.remove("readonly")
 
