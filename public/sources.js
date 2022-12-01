@@ -47,6 +47,8 @@ async function contentHandler(){
 
         if (contentTimeout) clearTimeout(contentTimeout)
         contentTimeout = setTimeout(async () => {
+            if (noSourceSelected) return
+            
             await fetch("/api/updateSourceContent", {
                 method: "POST",
                 headers: {
@@ -172,10 +174,16 @@ function updateActiveSources() {
     if (!activeSource) activeSource = sourcesElement.firstElementChild
     if (!activeSource) {
         noSourceSelected = true
+        editorElement.setAttribute("readonly", noSourceSelected)
+        editorElement.classList.add("readonly")
         return
     }
 
     noSourceSelected = noCategorySelected
+    console.log(noSourceSelected)
+    editorElement.removeAttribute("readonly")
+    editorElement.classList.remove("readonly")
+
 
     activeSourceChange(activeSource.nid)
 }

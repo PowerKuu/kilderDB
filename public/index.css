@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300&family=Lato:wght@300&family=Mulish:wght@300&display=swap');
 
+:root {
+    --notactive: #cfcfcf;
+    --active: #000000;
+}
+
 @-webkit-keyframes rotating {
     from{
         -webkit-transform: rotate(0deg);
@@ -28,9 +33,28 @@ html, body, .sections {
     background-color: rgb(255, 255, 255);
 }   
 
+
+.toggle {
+    width: unset !important;
+    position: absolute;
+    font-size: 0.8rem;
+    left: 10px;
+    bottom: 57px;
+    padding-left: 1rem; 
+    padding-right: 1rem;
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+    color: #ffffff  ;
+    background-color: #000000;
+}
+
+.toggle:hover {
+    cursor: pointer;
+}
+
 .watermark {
     position: absolute;
-    color: black;
+    color: var(--active);
     left: 0.4rem;
     bottom: 0.3rem;
     font-size: 0.8rem !important;
@@ -41,6 +65,7 @@ html, body, .sections {
     width: 1.2rem;
 
     position: absolute;
+    z-index: 1;
     right: 0.4rem;
     bottom: 0.3rem;
 }
@@ -86,14 +111,14 @@ html, body, .sections {
     justify-content: space-between;
     align-items: center;
 
-    border-bottom: 1px solid rgb(181, 181, 181);
+    border-bottom: 2px solid var(--notactive);
 
     padding-left: 0.5rem;
     padding-right: 0.5rem;
 }
 
 .item.active, .item:hover {
-    border-bottom: 1px solid black;
+    border-bottom: 2px solid var(--active);
 }
 
 
@@ -133,12 +158,12 @@ html, body, .sections {
 
 .search {
     flex-direction: row;
-    border-bottom: 1px solid rgb(181, 181, 181);
+    border-bottom: 2px solid var(--notactive);
     margin-bottom: 1rem;
 }
 
 .search:has(> input:focus) {
-    border-bottom: black 1px solid;
+    border-bottom: var(--active) 2px solid;
 }
 
 .search input { 
@@ -175,15 +200,17 @@ html, body, .sections {
 
 
 .categories {
-    border-right: 1px solid rgb(181, 181, 181);
+    border-right: 2px solid var(--notactive);
 }
 
 .sources {
-    border-right: 1px solid rgb(181, 181, 181);
+    border-right: 2px solid var(--notactive);
 }
 
 .source-view {
+    z-index: 0;
     flex: 1;
+    position: relative;
 }
 
 .editor {
@@ -191,4 +218,8 @@ html, body, .sections {
     resize: none;
     outline: 0;
     border: 0;
+}
+
+.editor.readonly:hover {
+    cursor: not-allowed;
 }

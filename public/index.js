@@ -81,4 +81,9 @@ async function renderCategories(search = undefined){
 }
 
 
+function toggleMarkdown(){
+    if (noSourceSelected) return
+    
+}
+
 renderCategories()
