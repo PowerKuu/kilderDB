@@ -193,6 +193,7 @@ async function updateActiveSources() {
     if (!activeSource) activeSource = sourcesElement.firstElementChild
     if (!activeSource) {
         noSourceSelected = true
+        markdownElement.innerHTML = ""
         editorElement.setAttribute("readonly", true)
         editorElement.classList.add("readonly")
         return

@@ -90,8 +90,6 @@ async function renderCategories(search = undefined){
 var enableMarkdown = true
 
 function toggleMarkdown(){
-    if (noSourceSelected || noCategorySelected) return
-
     if (enableMarkdown) {
         editorElement.style.display = "none"
         markdownElement.style.display = "block"
