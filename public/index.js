@@ -2,6 +2,8 @@ const editorElement = document.getElementById("editor")
 const toggleElement = document.getElementById("toggle")
 const markdownElement = document.getElementById("markdown")
 
+const converter = new showdown.Converter()
+
 async function renderSources(id, search){
     if (noCategorySelected) return
     
@@ -44,7 +46,7 @@ async function renderSources(id, search){
         addSource(source.name, source.id)
     }
 
-    updateActiveSources()
+    await updateActiveSources()
 }
 
 async function renderCategories(search = undefined){
@@ -81,20 +83,33 @@ async function renderCategories(search = undefined){
         addCategory(category.name, category.id)
     }
 
-    updateActiveCategories()
+    await updateActiveCategories()
 }
 
 
-var enableMarkdown = false
+var enableMarkdown = true
+
 function toggleMarkdown(){
     if (noSourceSelected || noCategorySelected) return
-    enableMarkdown = !enableMarkdown
 
     if (enableMarkdown) {
-        
-    } else {
+        editorElement.style.display = "none"
+        markdownElement.style.display = "block"
 
+        toggleElement.innerHTML = "Editor"
+    } else {
+        editorElement.style.display = "block"
+        markdownElement.style.display = "none"
+
+        toggleElement.innerHTML = "Markdown"
     }
 }
 
-renderCategories()
+toggleElement.addEventListener("click", () => {
+    enableMarkdown = !enableMarkdown
+    toggleMarkdown()
+})
+
+renderCategories().then(async () => {
+    toggleMarkdown()
+})

@@ -59,7 +59,6 @@ export async function searchCategories(search:string): Promise<Categories|null>{
     regexpName: `/${search}.*/`
   })
 
-  console.log(rawData, `/${search}.*/`)
 
   const data = rawData?.queryCategory
 

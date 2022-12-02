@@ -48,7 +48,7 @@ addCategoryElement.onclick = async () => {
         })
     })
 
-    renderCategories()
+    await renderCategories()
 }
 
 
@@ -94,22 +94,21 @@ function addCategory(name, id) {
     }
 }
 
-function activeCategoryChange(id) {
+async function activeCategoryChange(id) {
     const lastElement = categoriesElement.querySelector(`#${hashHex(lastActiveCategory)}`)
     if (lastElement) {
         lastElement.classList.remove('active')
     }
     const currentElement = categoriesElement.querySelector(`#${hashHex(id)}`)
     if (currentElement) {
-        renderSources(id)
-
+        await renderSources(id)
         currentElement.classList.add('active')
         
         lastActiveCategory = id
     }
 }
 
-function updateActiveCategories() {
+async function updateActiveCategories() {
     var activeCategory = categoriesElement.querySelector(`#${hashHex(lastActiveCategory)}`)
     
     if (!activeCategory) activeCategory = categoriesElement.firstElementChild
@@ -127,5 +126,5 @@ function updateActiveCategories() {
     editorElement.removeAttribute("readonly")
     editorElement.classList.remove("readonly")
 
-    activeCategoryChange(activeCategory.nid)
+    await activeCategoryChange(activeCategory.nid)
 }

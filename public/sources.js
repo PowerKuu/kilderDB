@@ -12,6 +12,23 @@ var contentTimeout
 
 var noSourceSelected
 
+function escapeHtml(unsafe)
+{
+    return unsafe
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+}
+
+function updateMarkdown(){
+    const safe = escapeHtml(editorElement.value)
+    const html = converter.makeHtml(safe ?? "")
+    markdownElement.innerHTML = html
+}
+
+
 async function contentHandler(){
     if (contentTimeout) clearTimeout(contentTimeout)
 
@@ -30,6 +47,8 @@ async function contentHandler(){
     if (content != undefined){
         editorElement.value = content.trim()
     } 
+
+    updateMarkdown()
 
     editorElement.addEventListener("input", (event) => {
         if (noSourceSelected) {
@@ -57,6 +76,8 @@ async function contentHandler(){
                     sourceID: id
                 })
             })
+
+            updateMarkdown()
             syncElement.classList.replace("working", "done")
         }, 1000)
     })
@@ -104,7 +125,7 @@ addSourceElement.onclick = async () => {
         })
     })
 
-    renderSources(lastActiveCategory)
+    await renderSources(lastActiveCategory)
 }
 
 
@@ -145,14 +166,14 @@ function addSource(name, id) {
                 })
             })
 
-            renderSources(lastActiveCategory, lastSourceSearch)
+            await renderSources(lastActiveCategory, lastSourceSearch)
             return
         }
-        activeSourceChange(id)
+        await activeSourceChange(id)
     }
 }
 
-function activeSourceChange(id) {
+async function activeSourceChange(id) {
     const lastElement = sourcesElement.querySelector(`#${hashHex(lastActiveSource)}`)
     if (lastElement) {
         lastElement.classList.remove('active')
@@ -160,13 +181,13 @@ function activeSourceChange(id) {
     const currentElement = sourcesElement.querySelector(`#${hashHex(id)}`)
     if (currentElement) {
         currentElement.classList.add('active')
-
         lastActiveSource = id
-        contentHandler()
+
+        await contentHandler()
     }
 }
 
-function updateActiveSources() {
+async function updateActiveSources() {
     var activeSource = sourcesElement.querySelector(`#${hashHex(lastActiveSource)}`)
     
     if (!activeSource) activeSource = sourcesElement.firstElementChild
@@ -183,5 +204,5 @@ function updateActiveSources() {
     editorElement.classList.remove("readonly")
 
 
-    activeSourceChange(activeSource.nid)
+    await activeSourceChange(activeSource.nid)
 }
